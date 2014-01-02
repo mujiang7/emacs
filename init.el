@@ -48,6 +48,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
  '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=16"
  '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
 
+
 (defun my-comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
 If no region is selected and current line is not blank and we are not at the end of the line,
@@ -94,19 +95,13 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (global-set-key (kbd "C-SPC") 'nil)
 (global-set-key (kbd "C-\`") 'iswitchb-buffer)
 (global-set-key [C-f4] 'kill-buffer)
-(tool-bar-mode nil)
+;; (tool-bar-mode nil)
 (setq default-major-mode 'text-mode)
 (global-set-key (kbd "C-c C-S-c") 'uncomment-region)
 (global-set-key (kbd "C-S-SPC") 'set-mark-command)
 ;(put 'upcase-region 'disabled nil)
 (global-set-key [C-tab] 'other-window)
 (global-set-key [f9] 'compile)
-
-;; ;; 加载erlang mode
-;; (setq load-path (cons  "c:/erl5.5.5/lib/tools-2.5.5/emacs/" load-path))
-;; (setq erlang-root-dir "c:/erl5.5.5")
-;; (setq exec-path (cons "c:/erl5.5.5/bin" exec-path))
-;; (require 'erlang-start)
 
 ;---- yasnippet --
 (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
@@ -115,18 +110,145 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
 (yas/global-mode 1)
 
-;; (global-set-key (kbd "C-x C-b") 'buffer-menu)
-;; (global-unset-key (kbd "C-x f"))
-
 ;;;; auto-complete plug in
+;; (add-to-list 'load-path "~/.emacs.d/plugins/auto-complete-1.3.1")
+;; (require 'auto-complete-config)
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/auto-complete-1.3.1/ac-dict")
+;; (ac-config-default)
+;; (setq ac-ignore-case t)
+;; (setq ac-auto-start 2)
+;; (setq ac-dwim t)
 
-(add-to-list 'load-path "~/.emacs.d/plugins/auto-complete-1.3.1")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/auto-complete-1.3.1/ac-dict")
-(ac-config-default)
-(setq ac-ignore-case t)
-(setq ac-auto-start 2)
-(setq ac-dwim t)
+
+
+;; ;; author: pluskid
+;; ;; 调用 stardict 的命令行接口来查辞典
+;; ;; 如果选中了 region 就查询 region 的内容，
+;; ;; 否则就查询当前光标所在的词
+;; (global-set-key (kbd "C-c t") 'kid-star-dict)
+;; (defun kid-star-dict ()
+;;   (interactive)
+;;   (let ((begin (point-min))
+;;         (end (point-max)))
+;;     (if mark-active
+;;         (setq begin (region-beginning)
+;;               end (region-end))
+;;       (save-excursion
+;;         (backward-word)
+;;         (mark-word)
+;;         (setq begin (region-beginning)
+;;               end (region-end))))
+;;     ;; 有时候 stardict 会很慢，所以在回显区显示一点东西
+;;     ;; 以免觉得 Emacs 在干什么其他奇怪的事情。
+;;     (message "searching for %s ..." (buffer-substring begin end))
+;;     (tooltip-show
+;;      (shell-command-to-string
+;;       (concat "c:\\bdict.cmd "
+;;               (buffer-substring begin end))) t)))
+
+;; (global-set-key (kbd "C-c b") 'kid-sdcv-to-buffer)
+;; (defun kid-sdcv-to-buffer ()
+;;   (interactive)
+;;   (let ((word (if mark-active
+;;                   (buffer-substring-no-properties (region-beginning) (region-end))
+;;                   (current-word nil t))))
+;;     (setq word (read-string (format "Search the dictionary for (default %s): " word)
+;;                             nil nil word))
+;;     (set-buffer (get-buffer-create "*baidu dict*"))
+;;     (buffer-disable-undo)
+;;     (erase-buffer)
+;;     (let ((process (start-process-shell-command "c:\\bdict.cmd" "*baidu dict*" "c:\\bdict.cmd" word)))
+;;       (set-process-sentinel
+;;        process
+;;        (lambda (process signal)
+;;          (when (memq (process-status process) '(exit signal))
+;;            (unless (string= (buffer-name) "*baidu dict*")
+;;              (setq kid-sdcv-window-configuration (current-window-configuration))
+;;              (switch-to-buffer-other-window "*baidu dict*")
+;;              (local-set-key (kbd "d") 'kid-sdcv-to-buffer)
+;;              (local-set-key (kbd "q") (lambda ()
+;;                                         (interactive)
+;;                                         (bury-buffer)
+;;                                         (unless (null (cdr (window-list))) ; only one window
+;;                                           (delete-window)))))
+;;            (goto-char (point-min))))))))
+
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+(defalias 'perl-mode 'cperl-mode)
+(add-hook 'cperl-mode-hook '(lambda()
+			      (local-set-key [M-f1] 'cperl-perldoc)))
+
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+
+(server-mode 1)
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(abbrev-mode t)
+ '(case-fold-search nil)
+ '(column-number-mode t)
+ '(default-major-mode (quote text-mode) t)
+ '(delete-selection-mode t)
+ '(display-time-mode t)
+ '(ecb-compile-window-height 6)
+ '(ecb-compile-window-width (quote edit-window))
+ '(ecb-options-version "2.40")
+ '(ecb-source-path (quote (("c:" "c:"))))
+ '(ecb-tip-of-the-day nil)
+ '(icomplete-mode t)
+ '(initial-scratch-message nil)
+ '(iswitchb-mode t)
+ '(mew-use-cached-passwd t)
+ '(mew-use-master-passwd nil)
+ '(semantic-c-dependency-system-include-path (quote ("/usr/include" "/usr/src/linux/include")))
+ '(tool-bar-mode nil))
+ ;; '(shell-file-name "c:\\mingw\\msys\\1.0\\bin\\bash.exe"))
+; '(ecb-options-version "2.40"))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 158 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
+
+;; 
+;; mew config
+;;
+;; (autoload 'mew "mew" nil t)
+;; (autoload 'mew-send "mew" nil t)
+
+;; ;; Optional setup (Read Mail menu for Emacs 21):
+;; (if (boundp 'read-mail-command)
+;;     (setq read-mail-command 'mew))
+
+;; ;; Optional setup (e.g. C-xm for sending a message):
+;; (autoload 'mew-user-agent-compose "mew" nil t)
+;; (if (boundp 'mail-user-agent)
+;;     (setq mail-user-agent 'mew-user-agent))
+;; (if (fboundp 'define-mail-user-agent)
+;;     (define-mail-user-agent
+;;       'mew-user-agent
+;;       'mew-user-agent-compose
+;;       'mew-draft-send-message
+;;       'mew-draft-kill
+;;       'mew-send-hook))
+
+;; (set-language-environment "Chinese-GBK")
+;; (set-input-method "latin-1-prefix") ;; or "latin-1-postfix"
+
+
+;; cc-mode-mode
+;; (add-hook 'cc-mode 'lambda()(
+;; 			     (c-set-style “stroustrup”)))
+;; (message Man-switches)
+;; (require 'man)
+;; (set 'Man-switches (concat Man-switches "-a"))
 
 ;; flymake for python
 ;; (require 'flymake)
@@ -299,137 +421,17 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;; End Auto Completion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-
-;; ;; author: pluskid
-;; ;; 调用 stardict 的命令行接口来查辞典
-;; ;; 如果选中了 region 就查询 region 的内容，
-;; ;; 否则就查询当前光标所在的词
-;; (global-set-key (kbd "C-c t") 'kid-star-dict)
-;; (defun kid-star-dict ()
-;;   (interactive)
-;;   (let ((begin (point-min))
-;;         (end (point-max)))
-;;     (if mark-active
-;;         (setq begin (region-beginning)
-;;               end (region-end))
-;;       (save-excursion
-;;         (backward-word)
-;;         (mark-word)
-;;         (setq begin (region-beginning)
-;;               end (region-end))))
-;;     ;; 有时候 stardict 会很慢，所以在回显区显示一点东西
-;;     ;; 以免觉得 Emacs 在干什么其他奇怪的事情。
-;;     (message "searching for %s ..." (buffer-substring begin end))
-;;     (tooltip-show
-;;      (shell-command-to-string
-;;       (concat "c:\\bdict.cmd "
-;;               (buffer-substring begin end))) t)))
-
-;; (global-set-key (kbd "C-c b") 'kid-sdcv-to-buffer)
-;; (defun kid-sdcv-to-buffer ()
-;;   (interactive)
-;;   (let ((word (if mark-active
-;;                   (buffer-substring-no-properties (region-beginning) (region-end))
-;;                   (current-word nil t))))
-;;     (setq word (read-string (format "Search the dictionary for (default %s): " word)
-;;                             nil nil word))
-;;     (set-buffer (get-buffer-create "*baidu dict*"))
-;;     (buffer-disable-undo)
-;;     (erase-buffer)
-;;     (let ((process (start-process-shell-command "c:\\bdict.cmd" "*baidu dict*" "c:\\bdict.cmd" word)))
-;;       (set-process-sentinel
-;;        process
-;;        (lambda (process signal)
-;;          (when (memq (process-status process) '(exit signal))
-;;            (unless (string= (buffer-name) "*baidu dict*")
-;;              (setq kid-sdcv-window-configuration (current-window-configuration))
-;;              (switch-to-buffer-other-window "*baidu dict*")
-;;              (local-set-key (kbd "d") 'kid-sdcv-to-buffer)
-;;              (local-set-key (kbd "q") (lambda ()
-;;                                         (interactive)
-;;                                         (bury-buffer)
-;;                                         (unless (null (cdr (window-list))) ; only one window
-;;                                           (delete-window)))))
-;;            (goto-char (point-min))))))))
-
 ;; Load CEDET.
 ;; See cedet/common/cedet.info for configuration details.
-;; (load-file "~/.emacs.d/plugins/cedet-1.0/common/cedet.el")
-;; (add-to-list 'load-path "~/.emacs.d/plugins/ecb-2.40/")
-;; (require 'ecb)
-
-(defalias 'yes-or-no-p 'y-or-n-p)
-(defalias 'perl-mode 'cperl-mode)
-(add-hook 'cperl-mode-hook '(lambda()
-			      (local-set-key [M-f1] 'cperl-perldoc)))
-
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
-
-(server-mode 1)
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(abbrev-mode t)
- '(case-fold-search nil)
- '(column-number-mode t)
- '(default-major-mode (quote text-mode) t)
- '(delete-selection-mode t)
- '(display-time-mode t)
- '(ecb-compile-window-height 6)
- '(ecb-compile-window-width (quote edit-window))
- '(ecb-options-version "2.40")
- '(ecb-source-path (quote (("c:" "c:"))))
- '(ecb-tip-of-the-day nil)
- '(icomplete-mode t)
- '(initial-scratch-message nil)
- '(iswitchb-mode t)
- '(mew-use-cached-passwd t)
- '(mew-use-master-passwd nil)
- '(tool-bar-mode nil))
- ;; '(shell-file-name "c:\\mingw\\msys\\1.0\\bin\\bash.exe"))
-; '(ecb-options-version "2.40"))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 158 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
-
-;; 
-;; mew config
-;;
-(autoload 'mew "mew" nil t)
-(autoload 'mew-send "mew" nil t)
-
-;; Optional setup (Read Mail menu for Emacs 21):
-(if (boundp 'read-mail-command)
-    (setq read-mail-command 'mew))
-
-;; Optional setup (e.g. C-xm for sending a message):
-(autoload 'mew-user-agent-compose "mew" nil t)
-(if (boundp 'mail-user-agent)
-    (setq mail-user-agent 'mew-user-agent))
-(if (fboundp 'define-mail-user-agent)
-    (define-mail-user-agent
-      'mew-user-agent
-      'mew-user-agent-compose
-      'mew-draft-send-message
-      'mew-draft-kill
-      'mew-send-hook))
-
-;; (set-language-environment "Chinese-GBK")
-;; (set-input-method "latin-1-prefix") ;; or "latin-1-postfix"
-
-
-;; cc-mode-mode
-;; (add-hook 'cc-mode 'lambda()(
-;; 			     (c-set-style “stroustrup”)))
-;; (message Man-switches)
-(require 'man)
-(set 'Man-switches (concat Man-switches "-a"))
+(load-file "~/.emacs.d/plugins/cedet-1.0/common/cedet.el")
+(add-to-list 'load-path "~/.emacs.d/plugins/ecb-2.40/")
+(require 'ecb)
+(require 'semantic)
+;; (semantic-load-enable-minimum-features)
+;; (semantic-load-enable-code-helpers)
+;; (semantic-load-enable-guady-code-helpers)
+(semantic-load-enable-excessive-code-helpers)
+(semantic-load-enable-semantic-debugging-helpers)
+;; (semantic-add-system-include "/usr/src/linux/include")
+(global-set-key [f12] 'semantic-ia-fast-jump)
+(global-set-key [M-/] 'semantic-ia-complete-symbol-menu)
