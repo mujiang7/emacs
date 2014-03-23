@@ -111,10 +111,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (yas/global-mode 1)
 
 ;;;; auto-complete plug in
-;; (add-to-list 'load-path "~/.emacs.d/plugins/auto-complete-1.3.1")
-;; (require 'auto-complete-config)
-;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/auto-complete-1.3.1/ac-dict")
-;; (ac-config-default)
+(add-to-list 'load-path "~/.emacs.d/plugins/auto-complete-1.3.1")
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/auto-complete-1.3.1/ac-dict") ;
+(require 'auto-complete-config)
+(ac-config-default)
 ;; (setq ac-ignore-case t)
 ;; (setq ac-auto-start 2)
 ;; (setq ac-dwim t)
@@ -151,7 +151,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
  '(iswitchb-mode t)
  '(mew-use-cached-passwd t)
  '(mew-use-master-passwd nil)
- '(semantic-c-dependency-system-include-path (quote ("/usr/include" "/usr/src/linux/include")))
  '(tool-bar-mode nil))
  ;; '(shell-file-name "c:\\mingw\\msys\\1.0\\bin\\bash.exe"))
 ; '(ecb-options-version "2.40"))
@@ -172,7 +171,28 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; (semantic-load-enable-code-helpers)
 ;; (semantic-load-enable-guady-code-helpers)
 (semantic-load-enable-excessive-code-helpers)
-(semantic-load-enable-semantic-debugging-helpers)
+;; (semantic-load-enable-semantic-debugging-helpers)
 ;; (semantic-add-system-include "/usr/src/linux/include")
 (global-set-key [f12] 'semantic-ia-fast-jump)
 (global-set-key [M-/] 'semantic-ia-complete-symbol-menu)
+
+
+(require 'xcscope)
+(global-set-key [C-f12] 'cscope-find-global-definition)
+(global-set-key [C-f11] 'cscope-pop-mark)
+
+(toggle-truncate-lines 1)
+
+(require 'go-mode-load)
+(require 'go-flymake)
+(require 'go-autocomplete)
+;; (require 'auto-complete-config)
+(require 'go-errcheck)
+(require 'go-eldoc)
+(add-hook 'before-save-hook 'gofmt-before-save)
+(add-hook 'go-mode-hook (lambda ()
+			  (go-eldoc-setup)
+			  (local-set-key (kbd "C-c c") 'go-errcheck)
+			  (local-set-key (kbd "C-c i") 'go-goto-imports)
+                          (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)))
+
