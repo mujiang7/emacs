@@ -48,7 +48,11 @@
 
     - 可以在这里下载别人写好到一些snippet，放到yasnippet中
       git clone https://github.com/dominikh/yasnippet-go.git
-
+** 小技巧
+   - godef-jump跳到定义后，可以用pop-tag-mark跳回来（M-*)
+   - coverage用法，打开test文件,
+     M-x compile --> go test -coverprofile=out生成coverage文件,然后M-x go-coverage打开这个文件
+     打开的试图中，红色字体表示没有执行到的语句，绿色字体表示执行到的语句，鼠标放在上面可以显示执行的次数
 ** 参考
    详细内容请参考这篇文档，里面说到非常清楚了:
    http://dominik.honnef.co/posts/2013/03/writing_go_in_emacs/

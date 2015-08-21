@@ -45,7 +45,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
                         zh-font))))
 
 (my-set-font
- '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=16"
+ '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=12"
  '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
 
 
@@ -192,6 +192,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (add-hook 'before-save-hook 'gofmt-before-save)
 (add-hook 'go-mode-hook (lambda ()
 			  (go-eldoc-setup)
+			  (local-set-key (kbd "C-c C-f") 'godoc)
 			  (local-set-key (kbd "C-c c") 'go-errcheck)
 			  (local-set-key (kbd "C-c i") 'go-goto-imports)
                           (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)))
